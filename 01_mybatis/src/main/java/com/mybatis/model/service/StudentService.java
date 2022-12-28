@@ -2,6 +2,8 @@ package com.mybatis.model.service;
 
 import static com.mybatis.common.SessionTemplate.getSession;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 
 import com.mybatis.model.dao.StudentDao;
@@ -35,5 +37,35 @@ public class StudentService {
 		else session.rollback();
 		session.close();
 		return result;
+	}
+	
+	public int updateStudent(Student s) {
+		SqlSession session=getSession();
+		int result=dao.updateStudent(session, s);
+		if(result>0) session.commit();
+		else session.rollback();
+		session.close();
+		return result;
+	}
+	
+	public int selectStudentCount() {
+		SqlSession session=getSession();
+		int result=dao.selectStudentCount(session);
+		session.close();
+		return result;
+	}
+	
+	public Student selectStudent(int no) {
+		SqlSession session=getSession();
+		Student s=dao.selectStudent(session,no);
+		session.close();
+		return s;
+	}
+	
+	public List<Student> selectStudentAll(){
+		SqlSession session=getSession();
+		List<Student> list=dao.selectStudentAll(session);
+		session.close();
+		return list;
 	}
 }

@@ -6,12 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
+//@Builder
 public class Student {
-	private int studentNo;
-	private String studentName;
-	private String studentTel;
-	private String studentEmail;
-	private String studentAddr;
+	private int no;
+	private String name;
+	private String phone;
+	private String email;
+	private String addr;
 	private Date reg_date;
 }
