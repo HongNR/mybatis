@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="emp">
+
+	<resultMap type="emp" id="empMap">
+		<id property="empId" column="emp_id"/>
+		<result property="empName" column="emp_name"/>
+		<result property="empNo" column="emp_no"/>
+		<!-- <result property="email" column="email"/> 명칭이 같으면 생략해도 됨-->
+		<!-- <result property="phone" column="phone"/> -->
+		<result property="deptCode" column="dept_code"/>
+		<result property="jobCode" column="job_code"/>
+		<result property="salLevel" column="sal_level"/>
+		<!-- <result property="salary" column="salary"/> -->
+		<!-- <result property="bonus" column="bonus"/> -->
+		<result property="managerId" column="manager_id"/>
+		<result property="hireDate" column="hire_date"/>
+		<result property="entDate" column="ent_date"/>
+		<result property="EntYn" column="ent_yn"/>
+	</resultMap>
+  	<select id="selectEmpList" resultMap="empMap">
+  		SELECT * FROM EMPLOYEE
+  	</select>
+  	
+  	<select id="selectEmpCount" resultType="_int">
+  		SELECT COUNT(*) FROM EMPLOYEE
+  	</select>
+  	
+  	<!-- map에 설정한 key값을 작성 -->
+  		<!-- SELECT * FROM EMPLOYEE WHERE #{type} LIKE '%'||#{keyword}||'%' -->
+  		<!-- SELECT * FROM EMPLOYEE WHERE 'emp_id' LIKE '%'||'99'||'%' -->
+  	<!-- 
+  		${} : 테이블명, 컬럼명을 표시하는 값(자료형 표시하지 않음)
+  		#{} : 컬럼의 비교대상이나 컬럼에 대입해야하는 값(자료형 유지)
+  	 -->
+  	<select id="searchEmp" parameterType="map" resultMap="empMap">
+  		SELECT * 
+  		FROM(SELECT e.*, DECODE(SUBSTR(EMP_NO,8,1),'1','M','2','F') AS GENDER
+  				FROM EMPLOYEE e) 
+  		WHERE ${type} LIKE '%'||#{keyword}||'%' 
+  			AND GENDER=#{gender}
+  		
+  	</select>
+</mapper>
