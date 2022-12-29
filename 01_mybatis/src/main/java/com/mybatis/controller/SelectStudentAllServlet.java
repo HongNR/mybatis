@@ -16,13 +16,13 @@ import com.mybatis.model.vo.Student;
  * Servlet implementation class SelectStudentAll
  */
 @WebServlet("/student/selectStudentAll.do")
-public class SelectStudentAll extends HttpServlet {
+public class SelectStudentAllServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public SelectStudentAll() {
+    public SelectStudentAllServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,13 +31,10 @@ public class SelectStudentAll extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Student> list=new StudentService().selectStudentAll();//전체학생
-//		for(Student s : list) {
-//			System.out.println(s);
-//		}
+		List<Student> students=new StudentService().selectStudentAll();//전체학생
 		
 		request.setAttribute("studentCount", new StudentService().selectStudentCount());
-		request.setAttribute("studentAll", list);
+		request.setAttribute("students", students);
 		request.getRequestDispatcher("/views/studentContent.jsp").forward(request, response);
 	}
 
