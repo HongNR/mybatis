@@ -10,6 +10,8 @@
 </head>
 <body>
 	<h2><a href="${path}/emp/empallList.do">사원조회</a></h2>
+	<h2><a href="${path}/selectDept.do?deptId=D5">부서조회</a></h2>
+	<h2><a href="${path}/boardView.do?boardNo=21">게시글 조회</a></h2>
 
 </body>
 </html>

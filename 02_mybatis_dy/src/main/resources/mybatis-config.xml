@@ -10,6 +10,9 @@
 	
 	<typeAliases>
 		<typeAlias type="com.emp.model.vo.Employee" alias="emp"/>
+		<typeAlias type="com.emp.model.vo.Department" alias="department"/>
+		<typeAlias type="com.emp.model.vo.Board" alias="board"/>
+		<typeAlias type="com.emp.model.vo.BoardComment" alias="boardcomment"/>
 	</typeAliases>
 	
 	<environments default="emp">
@@ -22,9 +25,20 @@
 				<property name="password" value="${pass}"/>
 			</dataSource>
 		</environment>
+		
+		<environment id="web">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${user1}"/>
+				<property name="password" value="${pass1}"/>
+			</dataSource>
+		</environment>
 	</environments>
 	
 	<mappers>
 		<mapper resource="/mappers/emp/emp-mapper.xml"/>
+		<mapper resource="/mappers/board/board-mapper.xml"/>
 	</mappers>
 </configuration>

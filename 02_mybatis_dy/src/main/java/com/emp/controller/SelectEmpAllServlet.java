@@ -66,7 +66,7 @@ public class SelectEmpAllServlet extends HttpServlet {
 		}else {
 			pageBar+="<a href='"+request.getRequestURI()+"?cPage="+(pageNo)+"'>[다음]</a>";
 		}
-		
+		System.out.println(list);
 		request.setAttribute("employees", list);
 		request.setAttribute("pageBar", pageBar);
 		request.getRequestDispatcher("/views/emp/empList.jsp").forward(request, response);

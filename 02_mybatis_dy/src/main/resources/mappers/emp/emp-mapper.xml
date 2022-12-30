@@ -6,20 +6,39 @@
 		<id property="empId" column="emp_id"/>
 		<result property="empName" column="emp_name"/>
 		<result property="empNo" column="emp_no"/>
-		<!-- <result property="email" column="email"/> 명칭이 같으면 생략해도 됨-->
-		<!-- <result property="phone" column="phone"/> -->
-		<result property="deptCode" column="dept_code"/>
+		<!-- 명칭이 같으면 생략해도 됨, 다만 association을 쓸거면 생략하면 안됨 -->
+		<result property="email" column="email"/> 
+		<result property="phone" column="phone"/>
+		<!-- <result property="deptCode" column="dept_code"/> -->
 		<result property="jobCode" column="job_code"/>
 		<result property="salLevel" column="sal_level"/>
-		<!-- <result property="salary" column="salary"/> -->
-		<!-- <result property="bonus" column="bonus"/> -->
+		<result property="salary" column="salary"/>
+		<result property="bonus" column="bonus"/>
 		<result property="managerId" column="manager_id"/>
 		<result property="hireDate" column="hire_date"/>
 		<result property="entDate" column="ent_date"/>
 		<result property="EntYn" column="ent_yn"/>
+		<result property="gender" column="gender"/>
+		
+		<!-- has a로 클래스타입을 한개 가지고 있을 때 association태그를 사용 -> 1:1관계 -->
+		<association property="dept" resultMap="departmentMap"/>
 	</resultMap>
+	
+	<resultMap type="department" id="departmentMap">
+		<id property="deptId" column="dept_id"/>
+		<result property="deptTitle" column="dept_title"/>
+		<result property="locationId" column="location_id"/>
+		<collection property="employees" resultMap="empMap"/>
+	</resultMap>
+	
+	<select id="selectDept" parameterType="string" resultMap="departmentMap">
+		SELECT * FROM DEPARTMENT JOIN EMPLOYEE ON DEPT_ID=DEPT_CODE 
+		WHERE DEPT_CODE=#{deptId}
+	</select>
+	
+	
   	<select id="selectEmpList" resultMap="empMap">
-  		SELECT * FROM EMPLOYEE
+  		SELECT * FROM EMPLOYEE left JOIN DEPARTMENT ON DEPT_CODE=DEPT_ID
   	</select>
   	
   	<select id="selectEmpCount" resultType="_int">
@@ -35,10 +54,67 @@
   	 -->
   	<select id="searchEmp" parameterType="map" resultMap="empMap">
   		SELECT * 
-  		FROM(SELECT e.*, DECODE(SUBSTR(EMP_NO,8,1),'1','M','2','F') AS GENDER
-  				FROM EMPLOYEE e) 
-  		WHERE ${type} LIKE '%'||#{keyword}||'%' 
-  			AND GENDER=#{gender}
+  		FROM(SELECT e.*,d.*, DECODE(SUBSTR(EMP_NO,8,1),'1','M','2','F') AS GENDER
+  				FROM EMPLOYEE e LEFT JOIN DEPARTMENT d ON e.DEPT_CODE=DEPT_ID) 
+  		WHERE 1=1 
+  		<!-- <where> -->
+  		<!-- <trim prefix="where" prefixOverrides="AND|OR"> -->
+	  		<if test="keyword !=null and keyword !=''"> 
+	  			AND ${type} LIKE '%'||#{keyword}||'%' 
+	  		</if>
+	  		<if test="gender !=null and gender !=''"> 
+	  			AND GENDER=#{gender}
+	  		</if>
+	  		<if test="salary !=null and salary !=''">
+	  			<!-- <if test="salFlag == 'ge'">
+					AND SALARY >= #{salary}
+	  			</if>
+	  			<if test="salFlag == 'le'">
+					AND SALARY <![CDATA[<=]]> #{salary}		  			
+					AND SALARY &lt;= #{salary}		  			
+	  			</if> -->
+	 			<choose>
+	 				<when test="salFlag eq 'ge'">
+	 					AND SALARY >= #{salary}
+	 				</when>
+	 				<otherwise>
+	 					AND SALARY &lt;= #{salary}
+	 				</otherwise>
+	 			</choose>
+	  		</if>
+	  		<if test="hireDate !=null and hireDate != ''">
+	  			<choose>
+	  				<when test="hireFlag eq 'le'">
+	  					AND HIRE_DATE <![CDATA[<=]]> TO_DATE(#{hireDate},'YY/MM/DD')
+	  				</when>
+	  				<when test="hireFlag eq 'ge'">
+	  					AND HIRE_DATE <![CDATA[>=]]> TO_DATE(#{hireDate},'YY/MM/DD')
+	  				</when>
+	  			</choose>
+	  		</if>
+	  		
+	  		<if test="jobs!=null and jobs!=''">
+	  			<!-- AND JOB_CODE IN (값, 값, 값...) -->
+	  			<!-- foreach 태그를 이용
+	  				속성
+	  				collection : 배열값, 다중값을 가진 변수명(key)
+	  				item : 다중값을 한개씩 저장하는 변수
+	  				open : 반복 시작할 때 출력할 문자 지정
+	  				close : 반복이 완전히 끝났을 때 문자 지정
+	  				separator : 반복문이 실행될때마다 출력할 문자 지정
+	  				index : 배열의 인덱스번호 
+	  			 -->
+	  			 AND JOB_CODE IN 
+	  			 <foreach collection="jobs" item="job" open="(" close=")"
+	  			 	separator=",">#{job}</foreach>
+	  		</if>
+	  		
+	  		
+	  		
+	  		
+	  		
+	  	<!-- </trim> -->
+  		<!-- </where> -->
   		
   	</select>
 </mapper>

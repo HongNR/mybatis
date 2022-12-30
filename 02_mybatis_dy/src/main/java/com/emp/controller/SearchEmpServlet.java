@@ -39,10 +39,19 @@ public class SearchEmpServlet extends HttpServlet {
 		String type=request.getParameter("type");
 		String keyword=request.getParameter("keyword");
 		
+		
 		Map<String,Object> param=new HashMap();
 		param.put("type", type);
 		param.put("keyword", keyword);
 		param.put("gender", request.getParameter("gender"));
+		param.put("salary", Integer.parseInt(
+				request.getParameter("salary").equals("")?"0":request.getParameter("salary")));//검색금액
+		param.put("salFlag", request.getParameter("salFlag"));//이상 or 이하
+		
+		//yyyy-MM-dd -> yyyy/MM/dd
+		param.put("hireDate", request.getParameter("hiredate").replace("-","/"));//입사일
+		param.put("hireFlag", request.getParameter("hireFlag"));
+		param.put("jobs", request.getParameterValues("job"));
 		
 		List<Employee> searchResult=new EmpService().searchEmp(param);
 		
